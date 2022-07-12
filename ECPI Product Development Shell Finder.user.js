@@ -505,6 +505,7 @@ function loadPDFinder() {
 			if($(lead + ' button:contains("Course")').length > 0) {
 				$(lead + ' button:contains("Course")').parent().append($('<button />').addClass('Button Button--success').attr({type: 'button', role: 'button', tabindex: 0}).css({marginLeft: $(lead + ' label').first().parent().css('paddingRight')}).html('<i class="icon-add"></i>&nbsp;Find QF Shells').on('click', findQFShells));
 				$(lead + ' button:contains("Course")').parent().append($('<button />').addClass('Button Button--success').attr({type: 'button', role: 'button', tabindex: 0}).css({marginLeft: $(lead + ' label').first().parent().css('paddingRight')}).html('<i class="icon-add"></i>&nbsp;Find WRK Shells').on('click', findWRKShells));
+				$(lead + ' button:contains("Course")').parent().append($('<button />').addClass('Button Button--success').attr({type: 'button', role: 'button', tabindex: 0}).css({marginLeft: $(lead + ' label').first().parent().css('paddingRight')}).html('<i class="icon-add"></i>&nbsp;Find Master Shells').on('click', findMasterShells));
 				clearInterval(wait);
 			} else if(i >= 30) {
 				clearInterval(wait);
@@ -525,40 +526,55 @@ function findQFShells() {
 function findWRKShells() {
 	findPDShells('WRK');
 }
+function findMasterShells() {
+	findPDShells('MASTER');
+}
 function findPDShells(shellType) {
 	loadAPIModal(function() {
 		callAPI('GET', ['accounts', 1, 'courses'], 1, [{}], function(courses) {
-			var nameRegex = shellType == 'QF' ? /^(\s*)QUICKFIX/ : /^(\s*)WORKING/;
-			courses = $.grep(courses, function(course) {
-				return !/^\s*?\d{4,}\w?/.test(course.name) && !/(OLD|OBSOLETE|Faculty Training|DO NOT USE)/.test(course.name) && nameRegex.test(course.name);
-			});
-			var goh = $.grep(courses, function(course) {
-				return /\bGOH\b/.test(course.name);
-			}).propSort('course_code');
-			var ol = $.grep(courses, function(course) {
-				return /\bOL\b/.test(course.name);
-			}).propSort('course_code');
-			var og = $.grep(courses, function(course) {
-				return /\bOG\b/.test(course.name);
-			}).propSort('course_code');
-			var hyb = $.grep(courses, function(course) {
-				return /\bHYB\b/.test(course.name);
-			}).propSort('course_code');
-			var de = $.grep(courses, function(course) {
-				return /\bDE\d+?\b/.test(course.name);
-			}).propSort('course_code');
-			var ce = $.grep(courses, function(course) {
-				return /\bCE\b/.test(course.name);
-			}).propSort('course_code');
+			var nameRegex = null;
+			switch(shellType) {
+				case 'QF':
+					nameRegex = /^(\s*)QUICKFIX/;
+					break;
+				case 'WRK':
+					nameRegex = /^(\s*)WORKING/;
+					break;
+				case 'MASTER':
+					nameRegex = /^(\s*)MASTER/;
+					break;
+			}
+			if(nameRegex !== null) {
+				courses = $.grep(courses, function(course) {
+					return !/^\s*?\d{4,}\w?/.test(course.name) && !/(OLD|OBSOLETE|Faculty Training|DO NOT USE)/.test(course.name) && nameRegex.test(course.name);
+				});
+				var goh = $.grep(courses, function(course) {
+					return /\bGOH\b/.test(course.name);
+				}).propSort('course_code');
+				var ol = $.grep(courses, function(course) {
+					return /\bOL\b/.test(course.name);
+				}).propSort('course_code');
+				var og = $.grep(courses, function(course) {
+					return /\bOG\b/.test(course.name);
+				}).propSort('course_code');
+				var hyb = $.grep(courses, function(course) {
+					return /\bHYB\b/.test(course.name);
+				}).propSort('course_code');
+				var de = $.grep(courses, function(course) {
+					return /\bDE\d+?\b/.test(course.name);
+				}).propSort('course_code');
+				var ce = $.grep(courses, function(course) {
+					return /\bCE\b/.test(course.name);
+				}).propSort('course_code');
 //			var mm = $.grep(courses, function(course) {
 //				return /\b(MM|CUR101)\b/.test(course.name);
 //			}).propSort('course_code');
-			var results = '';
+				var results = '';
 //			for(var i = 0; i < courses.length; i++) {
 //				results += courses[i].name + "\thttps://ecpi.instructure.com/courses/" + course[i]s.id + "\n";
 //			}
-			var i;
-			var started = false;
+				var i;
+				var started = false;
 //			if(mm.length > 0) {
 //				started = true;
 //				results += 'MM\n';
@@ -566,49 +582,50 @@ function findPDShells(shellType) {
 //					results += mm[i].name + "\thttps://ecpi.instructure.com/courses/" + mm[i].id + "\n";
 //				}
 //			}
-			if(ce.length > 0) {
-				results += (started ? "\n" : '') + "CE\n";
-				started = true;
-				for(i = 0; i < ce.length; i++) {
-					results += ce[i].name + "\thttps://ecpi.instructure.com/courses/" + ce[i].id + "\n";
+				if(ce.length > 0) {
+					results += (started ? "\n" : '') + "CE\n";
+					started = true;
+					for(i = 0; i < ce.length; i++) {
+						results += ce[i].name + "\thttps://ecpi.instructure.com/courses/" + ce[i].id + "\n";
+					}
 				}
-			}
-			if(de.length > 0) {
-				results += (started ? "\n" : '') + "DE\n";
-				started = true;
-				for(i = 0; i < de.length; i++) {
-					results += de[i].name + "\thttps://ecpi.instructure.com/courses/" + de[i].id + "\n";
+				if(de.length > 0) {
+					results += (started ? "\n" : '') + "DE\n";
+					started = true;
+					for(i = 0; i < de.length; i++) {
+						results += de[i].name + "\thttps://ecpi.instructure.com/courses/" + de[i].id + "\n";
+					}
 				}
-			}
-			if(goh.length > 0) {
-				results += (started ? "\n" : '') + "GOH\n";
-				started = true;
-				for(i = 0; i < goh.length; i++) {
-					results += goh[i].name + "\thttps://ecpi.instructure.com/courses/" + goh[i].id + "\n";
+				if(goh.length > 0) {
+					results += (started ? "\n" : '') + "GOH\n";
+					started = true;
+					for(i = 0; i < goh.length; i++) {
+						results += goh[i].name + "\thttps://ecpi.instructure.com/courses/" + goh[i].id + "\n";
+					}
 				}
-			}
-			if(hyb.length > 0) {
-				results += (started ? "\n" : '') + "HYB\n";
-				started = true;
-				for(i = 0; i < hyb.length; i++) {
-					results += hyb[i].name + "\thttps://ecpi.instructure.com/courses/" + hyb[i].id + "\n";
+				if(hyb.length > 0) {
+					results += (started ? "\n" : '') + "HYB\n";
+					started = true;
+					for(i = 0; i < hyb.length; i++) {
+						results += hyb[i].name + "\thttps://ecpi.instructure.com/courses/" + hyb[i].id + "\n";
+					}
 				}
-			}
-			if(og.length > 0) {
-				results += (started ? "\n" : '') + "OG\n";
-				started = true;
-				for(i = 0; i < og.length; i++) {
-					results += og[i].name + "\thttps://ecpi.instructure.com/courses/" + og[i].id + "\n";
+				if(og.length > 0) {
+					results += (started ? "\n" : '') + "OG\n";
+					started = true;
+					for(i = 0; i < og.length; i++) {
+						results += og[i].name + "\thttps://ecpi.instructure.com/courses/" + og[i].id + "\n";
+					}
 				}
-			}
-			if(ol.length > 0) {
-				results += (started ? "\n" : '') + "OL\n";
-				started = true;
-				for(i = 0; i < ol.length; i++) {
-					results += ol[i].name + "\thttps://ecpi.instructure.com/courses/" + ol[i].id + "\n";
+				if(ol.length > 0) {
+					results += (started ? "\n" : '') + "OL\n";
+					started = true;
+					for(i = 0; i < ol.length; i++) {
+						results += ol[i].name + "\thttps://ecpi.instructure.com/courses/" + ol[i].id + "\n";
+					}
 				}
+				generateModal('List of ' + (shellType == 'QF' ? 'QUICKFIX' : 'WORKING') + ' Shells', '<textarea style="width: auto; margin: 0;" rows="18" cols="100">' + results + '</textarea>');
 			}
-			generateModal('List of ' + (shellType == 'QF' ? 'QUICKFIX' : 'WORKING') + ' Shells', '<textarea style="width: auto; margin: 0;" rows="18" cols="100">' + results + '</textarea>');
 		});
 	});
 }
