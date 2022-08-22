@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ECPI Product Development Shell Finder
-// @include      /^https?:\/\/ecpi\.([^\.]*\.)?instructure\.com\/accounts\/\d+[^\/]*$/
+// @include      /^https?:\/\/[^\.]*\.([^\.]*\.)?instructure\.com\/accounts\/\d+[^\/]*$/
 // @version      0.2
 // @require       https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js
 // ==/UserScript==
