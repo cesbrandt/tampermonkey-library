@@ -1,13 +1,10 @@
 // ==UserScript==
 // @name         JSON Tree Builder 0.3
-// @namespace    http://tampermonkey.net/
 // @version      0.3
-// @description  try to take over the world!
-// @author       You
-// @include      /^https?:\/\/ecpi\.([^\.]*\.)?instructure\.com\/api\/v1.*$/
-// @include      /^https?:\/\/ecpiuniversity\.sf-api\.com.*$/
-// @include      /^https?:\/\/.*\.api\.battle\.net.*$/
-// @include      /^https?:\/\/ecpi\.instructuremedia\.com\/api\/.*$/
+// @updateURL    https://github.com/cesbrandt/tampermonkey-library/raw/main/JSON%20Tree%20Builder%200.3.user.js
+// @include      /^https?:\/\/[^\.]*\.([^\.]*\.)?instructure\.com\/api\/v1.*$/
+// @include      /^https?:\/\/[^\.]*\.sf-api\.com.*$/
+// @include      /^https?:\/\/[^\.]*\.instructuremedia\.com\/api\/.*$/
 // @grant        none
 // ==/UserScript==
 
