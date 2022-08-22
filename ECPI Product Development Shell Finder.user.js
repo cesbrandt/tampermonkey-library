@@ -1,8 +1,9 @@
 // ==UserScript==
 // @name         ECPI Product Development Shell Finder
-// @include      /^https?:\/\/[^\.]*\.([^\.]*\.)?instructure\.com\/accounts\/\d+[^\/]*$/
 // @version      0.2
-// @require       https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js
+// @updateURL    https://github.com/cesbrandt/tampermonkey-library/raw/main/ECPI%20Product%20Development%20Shell%20Finder.user.js
+// @include      /^https?:\/\/[^\.]*\.([^\.]*\.)?instructure\.com\/accounts\/\d+[^\/]*$/
+// @require      https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js
 // ==/UserScript==
 
 /**
