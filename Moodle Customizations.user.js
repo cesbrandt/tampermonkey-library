@@ -252,6 +252,79 @@ let importSettings = () => {
 	}
 };
 
+// Retrieve Question Bank IDs
+let retrieveQuestionBankIDs = () => {
+	document.querySelectorAll('.questioncategories').forEach((cat, i) => {
+		var btn = document.createElement('input');
+		btn.setAttribute('class', 'btn btn-info wiki_diffuserleft');
+		btn.value = 'Retrieve Category IDs';
+		btn.type = 'button';
+		btn.addEventListener('click', e => {
+			e.preventDefault();
+
+			var output = e.currentTarget.parentNode.querySelector('.catIDs');
+			var add = false;
+			if(output === null) {
+				output = document.createElement('textarea');
+				output.setAttribute('class', 'catIDs');
+				output.style.fontSize = 'initial';
+				output.style.resize = 'auto';
+				add = true;
+			}
+			output.value = '';
+			e.currentTarget.parentNode.parentNode.querySelectorAll('[title="Edit questions"]').forEach(bnk => {
+				var vals = bnk.getAttribute('href').split('?')[1].split('&');
+				var id = '';
+				vals.forEach(val => {
+					var pair = val.split('=');
+					if(pair[0] == 'cat') {
+						id = pair[1];
+					}
+				});
+				output.value = output.value + bnk.innerText.replace(/ \(\d+\)$/, '').trim() + "\t" + id + "\n";
+			});
+			if(add) {
+				e.currentTarget.parentNode.insertBefore(output, e.currentTarget);
+			}
+		});
+		cat.querySelector('h3').appendChild(btn);
+	});
+};
+
+// Float Question Bank Menus to Right
+let floatQuestionBankMenus = () => {
+	['delete', 'edit', 'moveupcontext', 'moveup', 'right', 'movedown', 'left'].forEach(urlPart => {
+		document.querySelectorAll('a[href*="question/category.php"][href*="' + urlPart + '="]').forEach(link => {
+			link.style.float = 'right';
+		});
+	});
+};
+
+// Delete Broken Quiz Questions
+let deleteBrokenQuizQuestions = () => {
+	var btn = document.createElement('input');
+	btn.setAttribute('class', 'btn btn-warning wiki_diffuserleft');
+	btn.style.marginLeft = '3px';
+	btn.value = 'Delete Broken Questions';
+	btn.type = 'button';
+	btn.addEventListener('click', e => {
+		e.preventDefault();
+
+		setTimeout(() => {
+			var delBtns = document.querySelectorAll('.activity.qtype_missingtype .mod-indent-outer .actions .editing_delete');
+			delBtns.forEach((btn) => {
+				btn.click();
+			});
+			setTimeout(() => {
+				document.querySelectorAll('.moodle-dialogue-base.moodle-dialogue-confirm .confirmation-dialogue .confirmation-buttons .btn-primary').forEach((btn) => {
+					btn.click();
+				});
+			}, 50 * delBtns.length);
+		}, 5000);
+	});
+	document.querySelector('.mod_quiz-edit-action-buttons').appendChild(btn);
+};
+
 /**
  * Variable setup
  */
@@ -272,6 +345,15 @@ window.onload = () => {
 			case '/course/view.php':
 				// Module List Inline Edit Links
 				moduleInlineEdit();
+				break;
+			case '/mod/quiz/edit.php':
+				// Delete Broken Quiz Questions
+				deleteBrokenQuizQuestions();
+				break;
+			case '/question/category.php':
+				// Retrieve Question Bank IDs
+				retrieveQuestionBankIDs();
+				floatQuestionBankMenus();
 				break;
 			case '/user/index.php':
 				if(GETS.perpage == undefined) {
